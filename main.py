@@ -1,9 +1,12 @@
-from PIL import Image
-import requests
 import re
 import os
+import time
+import requests
+import schedule
+from PIL import Image
 import pytesseract
 from twilio.rest import Client
+
 
 IMAGES_URL = "https://services.swpc.noaa.gov/products/animations/ovation_north_24h.json"
 BASE_URL = "https://services.swpc.noaa.gov"
@@ -40,24 +43,25 @@ def try_read_aurora():
     return try_parse_strength(strength)
 
 
-def send_text(strength: float):
+def send_text(body, to_number):
     account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
     auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
     from_number = os.environ.get("TWILIO_FROM_NUMBER")
-    to_number = os.environ.get("TWILIO_TO_NUMBER")
+    to_number = to_number if to_number else os.environ.get("TWILIO_TO_NUMBER")
 
     client = Client(account_sid, auth_token)
 
     client.messages.create(
         to=to_number,
         from_=from_number,
-        body="Aurora is active! Predicted strength is {} GW".format(strength),
+        body=body,
     )
 
 
-def maybe_send_text(strength: float):
+def maybe_send_aurora_text(strength: float):
     if strength > 70.0:
-        send_text(strength)
+        message = "Aurora is active! Predicted strength is {} GW".format(strength)
+        send_text(message)
     return
 
 
@@ -65,10 +69,19 @@ def check_aurora():
     try:
         fetch_latest_image()
         strength = try_read_aurora()
-        print(strength)
-        maybe_send_text(strength)
+        maybe_send_aurora_text(strength)
     except:
         pass
 
 
-check_aurora()
+def send_uptime_text():
+    send_text("Aurora still running :)")
+
+
+if __name__ == "__main__":
+    schedule.every(5).minutes.do(check_aurora)
+    schedule.every(1).day.do(send_uptime_text)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
