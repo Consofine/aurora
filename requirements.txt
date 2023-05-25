@@ -2,3 +2,4 @@ requests
 schedule
 pytesseract
 twilio
+python-dotenv

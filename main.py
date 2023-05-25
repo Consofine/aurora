@@ -6,7 +6,9 @@ import schedule
 from PIL import Image
 import pytesseract
 from twilio.rest import Client
+from dotenv import load_dotenv
 
+load_dotenv()
 
 IMAGES_URL = "https://services.swpc.noaa.gov/products/animations/ovation_north_24h.json"
 BASE_URL = "https://services.swpc.noaa.gov"
@@ -43,7 +45,7 @@ def try_read_aurora():
     return try_parse_strength(strength)
 
 
-def send_text(body, to_number):
+def send_text(body, to_number=None):
     account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
     auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
     from_number = os.environ.get("TWILIO_FROM_NUMBER")
@@ -79,6 +81,7 @@ def send_uptime_text():
 
 
 if __name__ == "__main__":
+    send_uptime_text()
     schedule.every(5).minutes.do(check_aurora)
     schedule.every(1).day.do(send_uptime_text)
 
