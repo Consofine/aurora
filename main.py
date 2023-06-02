@@ -68,6 +68,7 @@ def maybe_send_aurora_text(strength: float):
 
 
 def check_aurora():
+    print("Checking aurora!")
     try:
         fetch_latest_image()
         strength = try_read_aurora()
@@ -77,11 +78,11 @@ def check_aurora():
 
 
 def send_uptime_text():
+    print("Sending uptime text")
     send_text("Aurora still running :)")
 
 
 if __name__ == "__main__":
-    send_uptime_text()
     schedule.every(5).minutes.do(check_aurora)
     schedule.every(1).day.do(send_uptime_text)
 
