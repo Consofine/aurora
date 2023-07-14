@@ -3,7 +3,7 @@ import os
 import time
 import requests
 import schedule
-from PIL import Image
+from PIL import Image, ImageOps
 import pytesseract
 from datetime import datetime
 from twilio.rest import Client
@@ -44,7 +44,8 @@ def try_read_aurora():
     """
     image = Image.open("aurora.jpg")
     cropped_image = image.crop((565, 20, 633, 46))
-    strength = pytesseract.image_to_string(cropped_image)
+    grayscaled = ImageOps.grayscale(cropped_image)
+    strength = pytesseract.image_to_string(grayscaled)
     return try_parse_strength(strength)
 
 
