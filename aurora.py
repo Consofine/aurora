@@ -20,8 +20,13 @@ def fetch_latest_image():
 
 def try_read_aurora(image: Image):
     """
-    Loads an image at a predetermined path './aurora.jpg'
-    into Tesseract and returns the aurora strength in GW
+    Args:
+        - image: Image -- the PIL image to process
+    Returns:
+        strength: float -- the strength extracted from the image
+    Throws:
+        ValueError -- allows ValueError to bubble up if strength
+        extracted from image is not cast-able to a float.
     """
     cropped_image = image.crop((565, 20, 633, 46))
     grayscaled = ImageOps.grayscale(cropped_image)
