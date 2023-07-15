@@ -1,3 +1,4 @@
 *.env
-aurora.jpg
+aurora*.jpg
 .vscode
+__pycache__

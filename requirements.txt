@@ -3,3 +3,6 @@ schedule
 pytesseract
 twilio
 python-dotenv
+asyncio
+io
+argparse
