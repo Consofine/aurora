@@ -8,14 +8,14 @@ There are a few prerequisites before running this:
 3. (Optional) SMTP server if using SMTP. I downloaded [protonmail-bridge](https://proton.me/mail/bridge) so I could do this locally. [This guide](https://medium.com/@vdugnist/how-to-send-emails-programmatically-with-protonmail-c1d760985957) was helpful. Otherwise, I'm sure this could easily be adapted to use Gmail or something (boooo Google having access to all your emails).
 4. Set up env vars:
   - If using Twilio:
-    - TWILIO_AUTH_TOKEN
-    - TWILIO_ACCOUNT_SID
-    - TWILIO_FROM_NUMBER
-    - TWILIO_TO_NUMBER
+    - `TWILIO_AUTH_TOKEN`
+    - `TWILIO_ACCOUNT_SID`
+    - `TWILIO_FROM_NUMBER`
+    - `TWILIO_TO_NUMBER`
   - If using SMTP:
-    - TO_EMAIL
-    - FROM_EMAIL
-    - FROM_EMAIL_PASSWORD (**note**: for protonmail bridge, this is the password you get from your settings or by running `info` in the CLI after you've logged in. It is **not** your normal email password.)
+    - `TO_EMAIL`
+    - `FROM_EMAIL`
+    - `FROM_EMAIL_PASSWORD` (**note**: for protonmail bridge, this is the password you get from your settings or by running `info` in the CLI after you've logged in. It is **not** your normal email password.)
 
 ### Running
 Can just run this with `python main.py` (or `python3` or whatever). Other tips:
