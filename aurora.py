@@ -5,7 +5,7 @@ from io import BytesIO
 from constants import BASE_URL, IMAGES_URL
 from helpers import try_parse_strength
 from max_keeper import MaxKeeper
-from messenger import send_aurora_text
+from messenger import send_aurora_email
 
 
 def fetch_latest_image():
@@ -42,6 +42,6 @@ def check_aurora(max_keeper: MaxKeeper):
         max_keeper.maybe_clear_max_strength()
         if max_keeper.should_update_strength(strength):
             max_keeper.update_strength(strength)
-            send_aurora_text(strength)
+            send_aurora_email(strength)  # text or email
     except:
         pass

@@ -8,7 +8,7 @@ from aurora import check_aurora
 
 from metrics import test_accuracy
 from max_keeper import MaxKeeper
-from messenger import send_uptime_text
+from messenger import send_uptime_email
 
 load_dotenv()
 
@@ -16,7 +16,7 @@ load_dotenv()
 def main_loop():
     max_keeper = MaxKeeper()
     schedule.every(5).minutes.do(check_aurora, max_keeper)
-    schedule.every(1).day.do(send_uptime_text)
+    schedule.every(1).day.do(send_uptime_email)  # text or email
 
     while True:
         schedule.run_pending()
