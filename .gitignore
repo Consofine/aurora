@@ -2,3 +2,4 @@
 aurora*.jpg
 .vscode
 __pycache__
+*.asc

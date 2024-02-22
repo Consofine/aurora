@@ -1,21 +1,46 @@
 import os
 from twilio.rest import Client
-import smtplib
-from email.mime.text import MIMEText
+from envelope import Envelope
+from pathlib import Path
 
 
-def send_email(body, subject=None, to_email=None):
-    sender = os.environ.get("FROM_EMAIL")
-    receiver = to_email or os.environ.get("TO_EMAIL")
-    message = MIMEText(body)
-    message["Subject"] = subject or "Aurora Update"
-    message["From"] = sender
-    message["To"] = receiver
-    smtp = smtplib.SMTP_SSL("127.0.0.1", 1025)
-    # this is the pseudo-password (hashed?) from protonmail-bridge,
-    # NOT your actual email password
-    smtp.login(sender, os.environ.get("FROM_EMAIL_PASSWORD"))
-    smtp.sendmail(sender, [receiver], message.as_string())
+def check_env_vars(env_vars: list):
+    for item in env_vars:
+        value = (
+            os.environ.get(item[0], item[1])
+            if type(item) is tuple
+            else os.environ.get(item)
+        )
+        if not value:
+            raise Exception(
+                "missing env var: {}".format(item[0] if type(item) is tuple else item)
+            )
+
+
+def send_email(body: str, subject: str | None = None, to_email: str | None = None):
+    check_env_vars(["FROM_EMAIL", "FROM_EMAIL_PASSWORD", ("TO_EMAIL", to_email)])
+
+    gpg_key_path = os.environ.get("GPG_PUB_KEY_PATH")
+    if not gpg_key_path:
+        print(
+            "Warning: you are sending unencrypted email. Consider adding a GPG_PUB_KEY_PATH env var to encrypt."
+        )
+
+    res = Envelope(
+        subject=subject,
+        subject_encrypted="nunya" if gpg_key_path else None,
+        message=body,
+        encrypt=Path(gpg_key_path) if gpg_key_path else None,
+        from_=os.environ.get("FROM_EMAIL"),
+        smtp={
+            "host": "smtp.gmail.com",
+            "port": 587,
+            "user": os.environ.get("FROM_EMAIL"),
+            "password": os.environ.get("FROM_EMAIL_PASSWORD"),
+        },
+        to=to_email or os.environ.get("TO_EMAIL"),
+        send=True,
+    )
 
 
 def send_aurora_email(strength: float):
@@ -28,6 +53,15 @@ def send_uptime_email():
 
 
 def send_text(body, to_number=None):
+    check_env_vars(
+        [
+            "TWILIO_ACCOUNT_SID",
+            "TWILIO_AUTH_TOKEN",
+            "TWILIO_FROM_NUMBER",
+            ("TWILIO_TO_NUMBER", to_number),
+        ]
+    )
+
     account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
     auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
     from_number = os.environ.get("TWILIO_FROM_NUMBER")
